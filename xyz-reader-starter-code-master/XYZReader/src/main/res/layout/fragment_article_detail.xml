@@ -81,7 +81,6 @@
                         android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"
                         android:textAppearance="@style/TextAppearance.CondensedAndBoldFontPath"
                         android:textColor="#fff"
-                        android:textStyle="bold"
                         android:textSize="@dimen/detail_title_text_size"
                         android:lineSpacingMultiplier="0.9" />
 
@@ -91,7 +90,7 @@
                         android:textAppearance="@style/TextAppearance.CondensedFontPath"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#8fff" />
+                        android:textColor="#fff" />
                 </LinearLayout>
 
                 <!--TODO: do we need to care about detail_body_line_spacing_multiplier? -->
