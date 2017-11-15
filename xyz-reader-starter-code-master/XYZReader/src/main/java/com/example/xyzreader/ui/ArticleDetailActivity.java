@@ -86,7 +86,7 @@ public class ArticleDetailActivity extends ActionBarActivity
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
-                // TODO: NullPointerException !
+                // TODO: remove the following to avoid NullPointerException !
                 // java.lang.NullPointerException: Attempt to invoke virtual method 'android.view.ViewPropertyAnimator android.view.View.animate()' on a null object reference
 //                mUpButton.animate()
 //                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
@@ -160,7 +160,8 @@ public class ArticleDetailActivity extends ActionBarActivity
          if (mPager != null) {
              int index = mPager.getCurrentItem();
              MyPagerAdapter adapter = (MyPagerAdapter) mPager.getAdapter();
-             ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.getItem(index);
+             //ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.getItem(index);
+             ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.instantiateItem(mPager,index);
              return fragment;
          } else {
              return null;
@@ -266,16 +267,10 @@ public class ArticleDetailActivity extends ActionBarActivity
                     // containerView.setBackgroundColor(vibrant.getRgb());
                     // Update the title TextView with the proper text color
                     // titleView.setTextColor(vibrant.getTitleTextColor());
+                    mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
                 }
             }
         });
     }
 
-    // TODO : implement the callback - set shared content
-    @Override
-    public void setSharedContent(String sharedContent) {
-
-
-
-    }
 }

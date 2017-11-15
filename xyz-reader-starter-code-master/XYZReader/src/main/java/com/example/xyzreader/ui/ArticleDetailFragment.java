@@ -81,7 +81,7 @@ public class ArticleDetailFragment extends Fragment implements
     // TODO: add callback method to pass in the bitmap file
     public interface SetCallBack {
         public void setToolBarBitMap(Bitmap bitmap);
-        public void setSharedContent(String sharedContent);
+        //public void setSharedContent(String sharedContent);
     }
 
     /**
@@ -183,24 +183,33 @@ public class ArticleDetailFragment extends Fragment implements
         return mRootView;
     }
 
+    /**
+     * compose Title View with Body View
+     * @return
+     */
     public String getSharedContent() {
 
         String title = "";
+        String byline = "";
         String content = "";
 
         if (titleView != null) {
-
             title = (String) titleView.getText().toString();
         }
 
         if ( bodyView != null) {
+            byline = (String)bylineView.getText().toString();
+        }
 
+        if ( bodyView != null) {
             content = (String)bodyView.getText().toString();
         }
 
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(title)
-                .append("/n")
+                .append(System.getProperty("line.separator"))
+                .append(byline)
+                .append(System.getProperty("line.separator"))
                 .append(content);
         return stringBuffer.toString();
     }
@@ -289,15 +298,16 @@ public class ArticleDetailFragment extends Fragment implements
 
             }
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            Log.d("ArticalDetailFragment",mCursor.getString(ArticleLoader.Query.PHOTO_URL));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
-                            mToolBarBitmap = imageContainer.getBitmap();
+                            // mToolBarBitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
+                                // mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 // TODO: comment out the set bitmap code and use the callback method to pass in the bitmap image
                                 mBitMapCallBack.setToolBarBitMap(bitmap);
                                 /*
