@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -53,6 +55,7 @@ public class ArticleDetailActivity extends ActionBarActivity
     private Toolbar mToolBar;
     private ImageView mToolBarImage;
     private FloatingActionButton mShareFAB;
+    private String mImageURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,21 @@ public class ArticleDetailActivity extends ActionBarActivity
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
+
+                    Log.d("onPageSelected", "this is called when page is selected: " + position);
+
+                    ArticleDetailFragment fragment = getCurrentFragmentFromPager();
+                    if (fragment != null) {
+                        Bitmap bitmap = fragment.getBitMapImageOfArticle();
+                        if (bitmap!=null) {
+                            setBitMapForToolBar(bitmap);
+                        } else {
+
+                            Log.e(TAG,"onPageSelected:unable to get the fragment bitmap!");
+                        }
+                    } else {
+                        Log.e(TAG,"onPageSelected:unable to get the fragment!");
+                    }
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
                 updateUpButtonPosition();
@@ -149,7 +167,13 @@ public class ArticleDetailActivity extends ActionBarActivity
             }
         });
 
+
+//        Bitmap articleBitmap = getCurrentFragmentFromPager().getBitMapImageOfArticle();
+//        setBitMap(articleBitmap);
+
+
     }
+
 
     /**
      * getCurrentFragmentFromPager
@@ -159,6 +183,7 @@ public class ArticleDetailActivity extends ActionBarActivity
     private ArticleDetailFragment getCurrentFragmentFromPager() {
          if (mPager != null) {
              int index = mPager.getCurrentItem();
+             Log.d(TAG, "getCurrentFragmentFromPager mPager current item index:" + index);
              MyPagerAdapter adapter = (MyPagerAdapter) mPager.getAdapter();
              //ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.getItem(index);
              ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.instantiateItem(mPager,index);
@@ -186,11 +211,19 @@ public class ArticleDetailActivity extends ActionBarActivity
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
                     mPager.setCurrentItem(position, false);
+                    Log.d(TAG, "If mStartId > 0 Page's current item:" + position);
                     break;
                 }
                 mCursor.moveToNext();
             }
             mStartId = 0;
+
+//            Log.d(TAG, "set bitmap in onLoadFinished");
+//            // can set the first image at this point when finish the view pager data initialization
+//            ArticleDetailFragment fragment = getCurrentFragmentFromPager();
+//
+//            Bitmap bitmap = fragment.getBitMapImageOfArticle();
+//            setBitMapForToolBar(bitmap);
         }
     }
 
@@ -248,6 +281,32 @@ public class ArticleDetailActivity extends ActionBarActivity
     // TODO: implement the callback - set the bitmap for the ToolBar
     @Override
     public void setToolBarBitMap(Bitmap bitmap) {
+        // TODO: add implementation
+        mToolBarImage.setImageBitmap(bitmap);
+        Log.d(TAG,"setToolBarBitMap");
+
+        // Set the Toolbar color dynamically based on the Bitmap Palette color
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+//                R.drawable.profile_pic);
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                //mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(R.attr.colorPrimary));
+                //mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getMutedColor(R.attr.colorPrimaryDark);
+
+                Palette.Swatch vibrant = palette.getVibrantSwatch();
+                if (vibrant != null) {
+                    // Set the background color of a layout based on the vibrant color
+                    // containerView.setBackgroundColor(vibrant.getRgb());
+                    // Update the title TextView with the proper text color
+                    // titleView.setTextColor(vibrant.getTitleTextColor());
+                    mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
+                }
+            }
+        });
+    }
+
+    public void setBitMapForToolBar(Bitmap bitmap) {
         // TODO: add implementation
         mToolBarImage.setImageBitmap(bitmap);
         Log.d(TAG,"setToolBarBitMap");

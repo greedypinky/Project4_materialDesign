@@ -65,7 +65,7 @@ public class ArticleListActivity extends ActionBarActivity implements
         setSupportActionBar(mToolbar);
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
+        // final View toolbarContainerView = findViewById(R.id.toolbar_container);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 

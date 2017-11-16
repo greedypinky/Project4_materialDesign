@@ -69,7 +69,8 @@ public class ArticleDetailFragment extends Fragment implements
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
     // TODO: This will pass to Activity to set the bitmap image for the collapsableToolBar
-    private Bitmap mToolBarBitmap;
+    private Bitmap mToolBarBitmap = null;
+    // private String mArticleBitmapUrl;
 
     public SetCallBack mBitMapCallBack;
 
@@ -298,18 +299,21 @@ public class ArticleDetailFragment extends Fragment implements
 
             }
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
-            Log.d("ArticalDetailFragment",mCursor.getString(ArticleLoader.Query.PHOTO_URL));
+            Log.d(TAG, mCursor.getString(ArticleLoader.Query.PHOTO_URL));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
-                            // mToolBarBitmap = imageContainer.getBitmap();
+                            if (mToolBarBitmap == null) {
+                                mToolBarBitmap = imageContainer.getBitmap();
+                            }
+                            Log.d(TAG,"can we get bitmap?" + mToolBarBitmap);
                             if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
                                 // mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 // TODO: comment out the set bitmap code and use the callback method to pass in the bitmap image
-                                mBitMapCallBack.setToolBarBitMap(bitmap);
+                                //mBitMapCallBack.setToolBarBitMap(bitmap);
                                 /*
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
@@ -355,6 +359,8 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         bindViews();
+
+        Log.d(TAG,"onLoadFinished - can we get bitmap?" + getBitMapImageOfArticle());
     }
 
     @Override
@@ -386,6 +392,13 @@ public class ArticleDetailFragment extends Fragment implements
         }
     }
 
+    /*
+     * Activity will call this method to get back the bitmap image
+     */
+    public Bitmap getBitMapImageOfArticle() {
 
+         return mToolBarBitmap;
+
+    }
 
 }
