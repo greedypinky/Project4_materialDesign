@@ -209,14 +209,14 @@ public class ArticleDetailActivity extends ActionBarActivity
 
 
             // Does not really work
-            if (mCursor != null) {
-                if(!mCursor.isLast()) {
-                    mCursor.moveToFirst();
-                }
+//            if (mCursor != null) {
+//                if(!mCursor.isLast()) {
+//                    mCursor.moveToFirst();
+//                }
 
                 loadImage();
                 setBitMapForToolBar(mBitmap);
-            }
+            //}
         }
     }
 
