@@ -56,6 +56,7 @@ public class ArticleDetailActivity extends ActionBarActivity
     private ImageView mToolBarImage;
     private FloatingActionButton mShareFAB;
     private String mImageURL;
+    private Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,18 +104,8 @@ public class ArticleDetailActivity extends ActionBarActivity
 
                     Log.d("onPageSelected", "this is called when page is selected: " + position);
 
-                    ArticleDetailFragment fragment = getCurrentFragmentFromPager();
-                    if (fragment != null) {
-                        Bitmap bitmap = fragment.getBitMapImageOfArticle();
-                        if (bitmap!=null) {
-                            setBitMapForToolBar(bitmap);
-                        } else {
-
-                            Log.e(TAG,"onPageSelected:unable to get the fragment bitmap!");
-                        }
-                    } else {
-                        Log.e(TAG,"onPageSelected:unable to get the fragment!");
-                    }
+                    loadImage();
+                    setBitMapForToolBar(mBitmap);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
                 updateUpButtonPosition();
@@ -150,6 +141,9 @@ public class ArticleDetailActivity extends ActionBarActivity
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
                 mSelectedItemId = mStartId;
+
+                Log.d(TAG, "onCreated-what is the mSelectedItemId?" + mSelectedItemId);
+
             }
         }
 
@@ -166,11 +160,6 @@ public class ArticleDetailActivity extends ActionBarActivity
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-
-
-//        Bitmap articleBitmap = getCurrentFragmentFromPager().getBitMapImageOfArticle();
-//        setBitMap(articleBitmap);
-
 
     }
 
@@ -218,12 +207,16 @@ public class ArticleDetailActivity extends ActionBarActivity
             }
             mStartId = 0;
 
-//            Log.d(TAG, "set bitmap in onLoadFinished");
-//            // can set the first image at this point when finish the view pager data initialization
-//            ArticleDetailFragment fragment = getCurrentFragmentFromPager();
-//
-//            Bitmap bitmap = fragment.getBitMapImageOfArticle();
-//            setBitMapForToolBar(bitmap);
+
+            // Does not really work
+            if (mCursor != null) {
+                if(!mCursor.isLast()) {
+                    mCursor.moveToFirst();
+                }
+
+                loadImage();
+                setBitMapForToolBar(mBitmap);
+            }
         }
     }
 
@@ -330,6 +323,23 @@ public class ArticleDetailActivity extends ActionBarActivity
                 }
             }
         });
+    }
+
+    private void loadImage() {
+        Bitmap bitmap = null;
+        ImageLoaderHelper.getInstance(this).getImageLoader()
+                .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+                    @Override
+                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                        mBitmap = imageContainer.getBitmap();
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+
     }
 
 }
