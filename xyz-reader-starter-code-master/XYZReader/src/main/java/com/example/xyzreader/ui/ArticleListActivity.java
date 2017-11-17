@@ -219,9 +219,5 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
     }
 
-//    private void toolbarTextAppernce() {
-//        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
-//        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
-//    }
 
 }

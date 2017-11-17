@@ -174,7 +174,7 @@ public class ArticleDetailActivity extends ActionBarActivity
              int index = mPager.getCurrentItem();
              Log.d(TAG, "getCurrentFragmentFromPager mPager current item index:" + index);
              MyPagerAdapter adapter = (MyPagerAdapter) mPager.getAdapter();
-             //ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.getItem(index);
+
              ArticleDetailFragment fragment = (ArticleDetailFragment) adapter.instantiateItem(mPager,index);
              return fragment;
          } else {
@@ -206,7 +206,6 @@ public class ArticleDetailActivity extends ActionBarActivity
                 mCursor.moveToNext();
             }
             mStartId = 0;
-
 
             // Does not really work
 //            if (mCursor != null) {
@@ -271,60 +270,51 @@ public class ArticleDetailActivity extends ActionBarActivity
     }
 
 
-    // TODO: implement the callback - set the bitmap for the ToolBar
+    // TODO: implement the callback - set the bitmap for the ToolBar but it did not work
     @Override
     public void setToolBarBitMap(Bitmap bitmap) {
         // TODO: add implementation
         mToolBarImage.setImageBitmap(bitmap);
         Log.d(TAG,"setToolBarBitMap");
 
-        // Set the Toolbar color dynamically based on the Bitmap Palette color
-//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-//                R.drawable.profile_pic);
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
-                //mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(R.attr.colorPrimary));
-                //mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getMutedColor(R.attr.colorPrimaryDark);
 
                 Palette.Swatch vibrant = palette.getVibrantSwatch();
                 if (vibrant != null) {
-                    // Set the background color of a layout based on the vibrant color
-                    // containerView.setBackgroundColor(vibrant.getRgb());
-                    // Update the title TextView with the proper text color
-                    // titleView.setTextColor(vibrant.getTitleTextColor());
                     mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
                 }
             }
         });
     }
 
+    /**
+     * setBitMapForToolBar
+     * Set the Article bitmap image to the toolbar
+     * also update the ContentScrimColor by the image vibrant color
+     * @param bitmap
+     */
     public void setBitMapForToolBar(Bitmap bitmap) {
         // TODO: add implementation
         mToolBarImage.setImageBitmap(bitmap);
         Log.d(TAG,"setToolBarBitMap");
 
-        // Set the Toolbar color dynamically based on the Bitmap Palette color
-//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-//                R.drawable.profile_pic);
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
-                //mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(R.attr.colorPrimary));
-                //mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getMutedColor(R.attr.colorPrimaryDark);
-
                 Palette.Swatch vibrant = palette.getVibrantSwatch();
                 if (vibrant != null) {
-                    // Set the background color of a layout based on the vibrant color
-                    // containerView.setBackgroundColor(vibrant.getRgb());
-                    // Update the title TextView with the proper text color
-                    // titleView.setTextColor(vibrant.getTitleTextColor());
                     mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
                 }
             }
         });
     }
 
+    /**
+     * loadImage
+     * Load image from the PhotoURL
+     */
     private void loadImage() {
         Bitmap bitmap = null;
         ImageLoaderHelper.getInstance(this).getImageLoader()
