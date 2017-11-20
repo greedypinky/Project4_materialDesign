@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -28,6 +29,9 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.example.xyzreader.remote.RemoteEndpointUtil;
+
+import org.json.JSONArray;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,13 +39,31 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
+ * TODO:
  * An activity representing a list of Articles. This activity has different presentations for
  * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends ActionBarActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+
+/**
+ * TODO:
+ * Currently, your app doesn't use Snackbars. So please use it at least once in your app. Here is a simple tutorial that you can check out.
+ * Hint: you could show it when the app is done loading the article data or if there is no Internet connection.
+ *
+ *
+ * https://medium.com/google-developers/intercepting-everything-with-coordinatorlayout-behaviors-8c6adc140c26
+ *
+ * When the nested scrolling (or flinging) finishes, you’ll get a call to onStopNestedScroll().
+ * This marks the end of the scrolling — expect a new call to onStartNestedScroll() before the next scroll starts.
+ * Take, for example, a case where you want to hide a FloatingActionButton when scrolling down and
+ * show it when scrolling up — this only involves overriding onStartNestedScroll() and onNestedScroll(),
+ * as seen in this FABAwareScrollingViewBehavior.
+ *
+ */
+
+    public class ArticleListActivity extends AppCompatActivity implements
+            LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ArticleListActivity.class.toString();
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -112,6 +134,8 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        // try to call the Config URL:- what can I get ?
+        // JSONArray array = RemoteEndpointUtil.fetchJsonArray();
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
@@ -174,6 +198,15 @@ public class ArticleListActivity extends ActionBarActivity implements
             }
         }
 
+        /**
+         * Bind the following data
+         * ArticleLoader.Query.TITLE
+         * ArticleLoader.Query.AUTHOR
+         * ArticleLoader.Query.THUMB_URL
+         * ArticleLoader.Query.ASPECT_RATIO
+         * @param holder
+         * @param position
+         */
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
@@ -197,6 +230,8 @@ public class ArticleListActivity extends ActionBarActivity implements
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+
+            // TODO: How to make this Full-bleed picture?
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
 

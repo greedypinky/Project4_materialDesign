@@ -18,6 +18,7 @@ package com.example.xyzreader.ui;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ScrollView;
@@ -25,7 +26,9 @@ import android.widget.ScrollView;
 /**
  * A custom ScrollView that can accept a scroll listener.
  */
-public class ObservableScrollView extends ScrollView {
+// public class ObservableScrollView extends ScrollView {
+// as suggested change to use NestedScollView so that it can support back to API4
+public class ObservableScrollView extends NestedScrollView {
     private Callbacks mCallbacks;
 
     public ObservableScrollView(Context context, AttributeSet attrs) {

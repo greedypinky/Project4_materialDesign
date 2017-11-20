@@ -8,15 +8,19 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,7 +39,26 @@ import com.example.xyzreader.data.ItemsContract;
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
-public class ArticleDetailActivity extends ActionBarActivity
+
+/**
+ * TODO:
+ * Currently, your app doesn't use Snackbars. So please use it at least once in your app. Here is a simple tutorial that you can check out.
+ * Hint: you could show it when the app is done loading the article data or if there is no Internet connection.
+ */
+
+/**
+ * TODO:
+ * To make our app even more amazing, we can try animating the title, byline and body text
+ * (parallax effect; fade in/out animation, via the View.setAlpha) API)
+ * in the details screen, using ViewPager.PageTransformer. You can learn more here.
+ */
+
+/**
+ * To make our app even more amazing, we can try animating the title, byline and body text (parallax effect; fade in/out animation, via the View.setAlpha) API) in the details screen,
+ *  using ViewPager.PageTransformer. You can learn more here.
+ *  https://medium.com/@BashaChris/the-android-viewpager-has-become-a-fairly-popular-component-among-android-apps-its-simple-6bca403b16d4
+ */
+public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ArticleDetailFragment.SetCallBack {
 
     private static final String TAG = ArticleDetailActivity.class.getSimpleName();
@@ -153,11 +176,19 @@ public class ArticleDetailActivity extends ActionBarActivity
             public void onClick(View v) {
                 ArticleDetailFragment fragment = getCurrentFragmentFromPager();
                 String sharedContent = fragment.getSharedContent();
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
-                        .setType("text/plain")
-                        .setChooserTitle(getString(R.string.share_article))
-                        .setText(sharedContent)
-                        .getIntent(), getString(R.string.action_share)));
+
+                // check the network connectivity, if there is no network,show the Snackbar instead of starting share activity
+                if (!checkNetworkConnectivity()) {
+
+                    Snackbar.make(mShareFAB.getRootView(), "No network!", Snackbar.LENGTH_LONG).show();
+
+                } else {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
+                            .setType("text/plain")
+                            .setChooserTitle(getString(R.string.share_article))
+                            .setText(sharedContent)
+                            .getIntent(), getString(R.string.action_share)));
+                }
             }
         });
 
@@ -330,6 +361,22 @@ public class ArticleDetailActivity extends ActionBarActivity
                     }
                 });
 
+    }
+
+    /**
+     * checkNetworkConnectivity
+     * @return
+     */
+    private boolean checkNetworkConnectivity() {
+        // https://developer.android.com/training/monitoring-device-state/connectivity-monitoring.html
+        ConnectivityManager connectivityManager = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if(activeNetwork != null) {
+            activeNetwork.isConnectedOrConnecting();
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

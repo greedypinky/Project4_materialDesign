@@ -10,5 +10,6 @@
 
     <string name="up">Up</string>
     <string name="share_article">Share article</string>
+    <string name="no_network">No Network! Please check your connection.</string>
 
 </resources>
