@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -39,6 +40,13 @@ import com.example.xyzreader.data.ArticleLoader;
  * A fragment representing a single Article detail screen. This fragment is
  * either contained in a {@link ArticleListActivity} in two-pane mode (on
  * tablets) or a {@link ArticleDetailActivity} on handsets.
+ */
+
+/**
+ *
+ * To make our app even more amazing, we can try animating the title,
+ * byline and body text (parallax effect; fade in/out animation, via the View.setAlpha) API) in the details screen,
+ * using ViewPager.PageTransformer. You can learn more here.
  */
 public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -400,5 +408,36 @@ public class ArticleDetailFragment extends Fragment implements
          return mToolBarBitmap;
 
     }
+
+
+    /**
+     * ParallaxPageTransformer to add animation to the ViewPager
+     */
+//    public class ParallaxPageTransformer implements ViewPager.PageTransformer {
+//
+//        public void transformPage(View view, float position) {
+//
+//            int pageWidth = view.getWidth();
+//
+//
+//            if (position < -1) { // [-Infinity,-1)
+//                // This page is way off-screen to the left.
+//                view.setAlpha(1);
+//
+//            } else if (position <= 1) { // [-1,1]
+//// set negative because the animation needs to be the opposite of the movement
+//                titleView.setTranslationX(-position * (pageWidth / 2)); //Half the normal speed
+//                bylineView.setTranslationX(-position * (pageWidth / 4)); //Half the normal speed
+//                bodyView.setTranslationX(-position * (pageWidth / 8)); //Half the normal speed
+//
+//            } else { // (1,+Infinity]
+//                // This page is way off-screen to the right.
+//                view.setAlpha(1);
+//            }
+//
+//
+//        }
+//    }
+
 
 }

@@ -8,11 +8,13 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -28,13 +30,17 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
@@ -80,6 +86,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     private FloatingActionButton mShareFAB;
     private String mImageURL;
     private Bitmap mBitmap;
+    private CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +97,8 @@ public class ArticleDetailActivity extends AppCompatActivity
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
         setContentView(R.layout.activity_article_detail);
+
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.detail_coordinatorLayout);
         // TODO: get the ImageView for ToolBar
         mToolBarImage = (ImageView) findViewById(R.id.detail_image);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.detail_collapsingtoolbar_layout);
@@ -124,9 +133,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
-
                     Log.d("onPageSelected", "this is called when page is selected: " + position);
-
                     loadImage();
                     setBitMapForToolBar(mBitmap);
                 }
@@ -134,6 +141,9 @@ public class ArticleDetailActivity extends AppCompatActivity
                 updateUpButtonPosition();
             }
         });
+
+        // TODO: Set ViewTransformer to add animation to the ViewPager
+        mPager.setPageTransformer(true, new ParallaxPageTransformer());
 
        // mUpButtonContainer = findViewById(R.id.up_container);
 
@@ -179,9 +189,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                 // check the network connectivity, if there is no network,show the Snackbar instead of starting share activity
                 if (!checkNetworkConnectivity()) {
-
-                    Snackbar.make(mShareFAB.getRootView(), "No network!", Snackbar.LENGTH_LONG).show();
-
+                    Snackbar.make(mCoordinatorLayout, getString(R.string.no_network), Snackbar.LENGTH_LONG).show();
                 } else {
                     startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
                             .setType("text/plain")
@@ -192,6 +200,8 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
         });
 
+        // set animation for FAB
+       // mShareFAB.setAnimation(AnimationUtils.loadAnimation(this, ));
     }
 
 
@@ -238,15 +248,14 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
             mStartId = 0;
 
-            // Does not really work
-//            if (mCursor != null) {
-//                if(!mCursor.isLast()) {
-//                    mCursor.moveToFirst();
-//                }
-
+            // Load the image for the first page of ViewPager
                 loadImage();
-                setBitMapForToolBar(mBitmap);
-            //}
+                if (mBitmap != null) {
+                    setBitMapForToolBar(mBitmap);
+                } else {
+                    Log.e(TAG, "Unable to set bitmap into ToolBar");
+                }
+
         }
     }
 
@@ -348,18 +357,50 @@ public class ArticleDetailActivity extends AppCompatActivity
      */
     private void loadImage() {
         Bitmap bitmap = null;
-        ImageLoaderHelper.getInstance(this).getImageLoader()
-                .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+        try {
+            if (mCursor!=null) {
+                String url = mCursor.getString(ArticleLoader.Query.THUMB_URL);
+                Picasso.with(getApplicationContext()).load(url).into(new Target() {
                     @Override
-                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                        mBitmap = imageContainer.getBitmap();
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        Log.d(TAG, "onBitmapLoaded");
+                        mBitmap = bitmap;
                     }
 
                     @Override
-                    public void onErrorResponse(VolleyError volleyError) {
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        Log.d(TAG, "onBitmapFailed");
+                    }
 
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        Log.d(TAG, "onPrepareLoad");
                     }
                 });
+
+                bitmap =  mBitmap;
+            } else {
+                Log.e(TAG, "Data cursor is null!");
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, e.toString());
+        }
+
+
+//        ImageLoaderHelper.getInstance(this).getImageLoader()
+//                .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+//                    @Override
+//                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+//                        mBitmap = imageContainer.getBitmap();
+//                    }
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError volleyError) {
+//
+//                    }
+//                });
 
     }
 
@@ -379,4 +420,34 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * ParallaxPageTransformer to add animation to the ViewPager
+     */
+    public class ParallaxPageTransformer implements ViewPager.PageTransformer {
+
+        public void transformPage(View view, float position) {
+
+            int pageWidth = view.getWidth();
+
+            TextView titleView = (TextView) view.findViewById(R.id.article_title);
+            TextView bylineView = (TextView) view.findViewById(R.id.article_byline);
+            TextView bodyView = (TextView) view.findViewById(R.id.article_body);
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(1);
+
+            } else if (position <= 1) { // [-1,1]
+// set negative because the animation needs to be the opposite of the movement
+                titleView.setTranslationX(-position * (pageWidth / 2)); //Half the normal speed
+                bylineView.setTranslationX(-position * (pageWidth / 4)); //Half the normal speed
+                bodyView.setTranslationX(-position * (pageWidth / 8)); //Half the normal speed
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(1);
+            }
+
+        }
+    }
 }

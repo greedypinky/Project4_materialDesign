@@ -1,4 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detail_coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -57,9 +58,10 @@
     <!-- Removed the android:backgroundTint="@color/theme_accent, FAB will automatically picks up the accent color defined in the color theme -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
+        app:layout_anchor="@+id/pager"
+        app:layout_anchorGravity="bottom|right|end"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_gravity="bottom|right|end"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         app:fabSize="normal"

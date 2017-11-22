@@ -5,9 +5,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.FloatingActionButton.Behavior;
-
 
 /**
  * Add the hide and show behaviour for FAB
@@ -45,12 +45,11 @@ public class FabBehaviour extends FloatingActionButton.Behavior {
 
         // vertical pixels consumed by the target's own scrolling operation > 0
         if (dyConsumed > 0) {
-
-            child.hide();
-
+            Log.d("FAB_Behavour", "Hide FAB");
+            //child.hide();
         } else if (dyConsumed < 0) {
+            Log.d("FAB_Behavour", "Show FAB");
             // User scrolled up -> show the FAB
-
             child.show();
         }
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);

@@ -15,7 +15,7 @@
 
         <activity
             android:name=".ui.ArticleListActivity"
-            android:label="@string/welcome_xyz_reader">
+            android:label="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

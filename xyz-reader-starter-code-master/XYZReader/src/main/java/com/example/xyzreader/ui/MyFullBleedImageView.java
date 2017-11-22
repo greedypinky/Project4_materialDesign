@@ -6,11 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatImageView;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
-import android.support.v7.widget.AppCompatImageView;
+
 
 import com.example.xyzreader.R;
 
