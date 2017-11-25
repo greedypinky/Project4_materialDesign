@@ -19,27 +19,7 @@ public class FabBehaviour extends FloatingActionButton.Behavior {
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
                 || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
     }
-
-    // https://stackoverflow.com/questions/32038332/using-google-design-library-how-to-hide-fab-button-on-scroll-down
-//    @Override
-//    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-//       // super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-//
-//        if (dyConsumed > 0) {
-//
-//            child.hide();
-//
-//
-//        } else if (dyConsumed < 0) {
-//            // User scrolled up -> show the FAB
-//
-//            // ((FloatingActionButton) view).show();
-//
-//
-//        }
-//    }
-
-
+    
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
 
