@@ -51,7 +51,6 @@ public class FabBehaviour extends FloatingActionButton.Behavior {
             child.hide();
         } else if (dyConsumed < 0 ) {
             Log.d("FAB_Behavour", "Scroll down - Hide FAB");
-            // User scrolled up -> show the FAB
             child.hide();
         }
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
