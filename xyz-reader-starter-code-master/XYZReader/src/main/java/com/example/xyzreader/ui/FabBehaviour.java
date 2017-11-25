@@ -43,20 +43,24 @@ public class FabBehaviour extends FloatingActionButton.Behavior {
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
 
+        Log.d("OnNestedScroll", "what is dyConsumed?" + dyConsumed);
+
         // vertical pixels consumed by the target's own scrolling operation > 0
         if (dyConsumed > 0) {
-            Log.d("FAB_Behavour", "Hide FAB");
-            //child.hide();
-        } else if (dyConsumed < 0) {
-            Log.d("FAB_Behavour", "Show FAB");
+            Log.d("FAB_Behavour", "Scroll up - Hide FAB");
+            child.hide();
+        } else if (dyConsumed < 0 ) {
+            Log.d("FAB_Behavour", "Scroll down - Hide FAB");
             // User scrolled up -> show the FAB
-            child.show();
+            child.hide();
         }
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
     }
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target) {
+        Log.d("FAB_Behavour", "Stop scrolling - Show FAB");
+        child.show();
         super.onStopNestedScroll(coordinatorLayout, child, target);
     }
 

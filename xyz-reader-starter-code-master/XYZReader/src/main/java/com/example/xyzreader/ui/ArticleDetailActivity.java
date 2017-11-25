@@ -30,6 +30,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,7 +98,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
         setContentView(R.layout.activity_article_detail);
-
+        mShareFAB = (FloatingActionButton) findViewById(R.id.share_fab);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.detail_coordinatorLayout);
         // TODO: get the ImageView for ToolBar
         mToolBarImage = (ImageView) findViewById(R.id.detail_image);
@@ -121,12 +122,25 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrollStateChanged(int state) {
+                switch (state) {
+                    case ViewPager.SCROLL_STATE_DRAGGING:
+                        Animation startRotateAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                                R.anim.android_rotate_animation);
+                        // set animation for FAB
+                        mShareFAB.setAnimation(startRotateAnimation);
+
+                        break;
+                    case ViewPager.SCROLL_STATE_SETTLING:
+                        break;
+                    case ViewPager.SCROLL_STATE_IDLE:
+                        break;
+                    default:
+                        break;
+
+                }
+                Log.d(TAG, "onPageScrollStateChanged state:" + state);
                 super.onPageScrollStateChanged(state);
-                // TODO: remove the following to avoid NullPointerException !
-                // java.lang.NullPointerException: Attempt to invoke virtual method 'android.view.ViewPropertyAnimator android.view.View.animate()' on a null object reference
-//                mUpButton.animate()
-//                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
-//                        .setDuration(300);
+
             }
 
             @Override
@@ -145,31 +159,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         // TODO: Set ViewTransformer to add animation to the ViewPager
         mPager.setPageTransformer(true, new ParallaxPageTransformer());
 
-       // mUpButtonContainer = findViewById(R.id.up_container);
-
-       // mUpButton = findViewById(R.id.action_up);
-//        mUpButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onSupportNavigateUp();
-//            }
-//        });
-
-        // TODO: remove this part ?
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mUpButtonContainer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-//                @Override
-//                public WindowInsets onApplyWindowInsets(View view, WindowInsets windowInsets) {
-//                    view.onApplyWindowInsets(windowInsets);
-//                    mTopInset = windowInsets.getSystemWindowInsetTop();
-//                    mUpButtonContainer.setTranslationY(mTopInset);
-//                    updateUpButtonPosition();
-//                    return windowInsets;
-//                }
-//            });
-//        }
-
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
@@ -179,8 +168,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
             }
         }
-
-        mShareFAB = (FloatingActionButton) findViewById(R.id.share_fab);
         mShareFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +176,11 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                 // check the network connectivity, if there is no network,show the Snackbar instead of starting share activity
                 if (!checkNetworkConnectivity()) {
-                    Snackbar.make(mCoordinatorLayout, getString(R.string.no_network), Snackbar.LENGTH_LONG).show();
+                   Snackbar sb = Snackbar.make(mCoordinatorLayout, getString(R.string.no_network), Snackbar.LENGTH_LONG);
+                    View sbView = sb.getView();
+                    sbView.setElevation(getResources().getDimension(R.dimen.sb_elevation));
+                    sb.show();
+
                 } else {
                     startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
                             .setType("text/plain")
@@ -200,8 +191,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
         });
 
-        // set animation for FAB
-       // mShareFAB.setAnimation(AnimationUtils.loadAnimation(this, ));
+
     }
 
 
@@ -387,21 +377,6 @@ public class ArticleDetailActivity extends AppCompatActivity
             e.printStackTrace();
             Log.e(TAG, e.toString());
         }
-
-
-//        ImageLoaderHelper.getInstance(this).getImageLoader()
-//                .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-//                    @Override
-//                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-//                        mBitmap = imageContainer.getBitmap();
-//                    }
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError volleyError) {
-//
-//                    }
-//                });
-
     }
 
     /**
