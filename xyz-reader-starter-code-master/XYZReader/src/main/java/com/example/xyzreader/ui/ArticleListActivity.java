@@ -80,6 +80,7 @@ import java.util.GregorianCalendar;
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,8 +138,6 @@ import java.util.GregorianCalendar;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // try to call the Config URL:- what can I get ?
-        // JSONArray array = RemoteEndpointUtil.fetchJsonArray();
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
@@ -237,14 +236,12 @@ import java.util.GregorianCalendar;
 //                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 Log.d(TAG, "can we get the URL? " + mCursor.getString(ArticleLoader.Query.THUMB_URL));
 
-            //Uri uri = Uri.parse(mCursor.getString(ArticleLoader.Query.THUMB_URL));
-            //Picasso.with(getApplicationContext()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL).into(holder.thumbnailView);
-            Picasso.with(getApplicationContext()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL)).into(imageView);
-
-            // holder.thumbnailView.setImageURI(uri);
-
-            // TODO: How to make this Full-bleed picture?
-            // holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+            Uri uri = Uri.parse(mCursor.getString(ArticleLoader.Query.THUMB_URL));
+            holder.thumbnailView.setImageUrl(
+                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
+                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+            // TODO: it looks like we do not need this if we set the scale type in the layout file
+            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
 
         @Override
@@ -254,15 +251,15 @@ Log.d(TAG, "can we get the URL? " + mCursor.getString(ArticleLoader.Query.THUMB_
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // public DynamicHeightNetworkImageView thumbnailView;
-        public MyFullBleedImageView thumbnailView;
+        public DynamicHeightNetworkImageView thumbnailView;
+        //public MyFullBleedImageView thumbnailView;
         public TextView titleView;
         public TextView subtitleView;
 
         public ViewHolder(View view) {
             super(view);
-            //thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
-            thumbnailView = (MyFullBleedImageView) view.findViewById(R.id.thumbnail);
+            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
+            //thumbnailView = (MyFullBleedImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }

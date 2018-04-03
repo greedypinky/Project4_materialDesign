@@ -16,14 +16,25 @@
         android:orientation="vertical">
 
         <!--suppress AndroidLintContentDescription -->
-        <!--
+<!--
         <com.example.xyzreader.ui.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             android:background="@color/photo_placeholder" />
+
             -->
 
+        <com.example.xyzreader.ui.DynamicHeightNetworkImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:background="@color/photo_placeholder" />
+
+        <!-- TODO: remove my customized view -->
+<!--
         <com.example.xyzreader.ui.MyFullBleedImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
@@ -33,6 +44,7 @@
             >
 
         </com.example.xyzreader.ui.MyFullBleedImageView>
+        -->
 
         <TextView
             android:id="@+id/article_title"
