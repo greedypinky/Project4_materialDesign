@@ -230,18 +230,18 @@ import java.util.GregorianCalendar;
                         + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
 
-            ImageView imageView = (ImageView)holder.thumbnailView;
+            // ImageView imageView = (ImageView)holder.thumbnailView;
 //            holder.thumbnailView.setImageUrl(
 //                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
 //                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
-Log.d(TAG, "can we get the URL? " + mCursor.getString(ArticleLoader.Query.THUMB_URL));
+            Log.d(TAG, "can we get the URL? " + mCursor.getString(ArticleLoader.Query.THUMB_URL));
 
             Uri uri = Uri.parse(mCursor.getString(ArticleLoader.Query.THUMB_URL));
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
             // TODO: it looks like we do not need this if we set the scale type in the layout file
-            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+            // holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
 
         @Override
