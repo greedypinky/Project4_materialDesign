@@ -327,18 +327,24 @@ public class ArticleDetailActivity extends AppCompatActivity
      */
     public void setBitMapForToolBar(Bitmap bitmap) {
         // TODO: add implementation
-        mToolBarImage.setImageBitmap(bitmap);
-        Log.d(TAG,"setToolBarBitMap");
-
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                Palette.Swatch vibrant = palette.getVibrantSwatch();
-                if (vibrant != null) {
-                    mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
+        Log.d(TAG,"setBitMapForToolBar");
+        Log.d(TAG,"What is bitmap?" + bitmap);
+        if(bitmap!=null) {
+            mToolBarImage.setImageBitmap(bitmap);
+            //Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    Palette.Swatch vibrant = palette.getVibrantSwatch();
+                    if (vibrant != null) {
+                        mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(vibrant.getRgb()));
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            Log.e(TAG, "bitmap is null! but why?");
+        }
+
     }
 
     /**
@@ -346,14 +352,16 @@ public class ArticleDetailActivity extends AppCompatActivity
      * Load image from the PhotoURL
      */
     private void loadImage() {
-        Bitmap bitmap = null;
+       // Bitmap bitmap = null;
+        Log.d(TAG, "===========loadImage is called ===========");
         try {
             if (mCursor!=null) {
                 String url = mCursor.getString(ArticleLoader.Query.THUMB_URL);
+                Log.d(TAG, "load url:" + url.toString() + " into bitmap");
                 Picasso.with(getApplicationContext()).load(url).into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Log.d(TAG, "onBitmapLoaded");
+                        Log.d(TAG, "===========loadImage - onBitmapLoaded ===========");
                         mBitmap = bitmap;
                     }
 
@@ -364,11 +372,11 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                     @Override
                     public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        Log.d(TAG, "onPrepareLoad");
+                        Log.d(TAG, "===========loadImage - onPrepareLoad ===========");
                     }
                 });
 
-                bitmap =  mBitmap;
+               // bitmap =  mBitmap;
             } else {
                 Log.e(TAG, "Data cursor is null!");
 
