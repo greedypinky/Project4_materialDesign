@@ -13,6 +13,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -42,6 +44,8 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.io.IOException;
 
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
@@ -88,6 +92,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     private String mImageURL;
     private Bitmap mBitmap;
     private CoordinatorLayout mCoordinatorLayout;
+    private boolean isBitMapLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,8 +250,42 @@ public class ArticleDetailActivity extends AppCompatActivity
                 } else {
                     Log.e(TAG, "Unable to set bitmap into ToolBar");
                 }
+            // try this new method
+            // loadImage2();
 
         }
+    }
+
+    public void loadImage2() {
+
+       HandlerThread thread = new HandlerThread("GET BITMAP");
+       thread.start();
+       Handler handler =  new Handler(thread.getLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmap = null;
+                try {
+
+                    if (mCursor != null) {
+                        Log.d(TAG,"get url from cursor and try to load by Picasso!");
+                        String url = mCursor.getString(ArticleLoader.Query.THUMB_URL);
+                        bitmap = Picasso.with(getApplicationContext()).load(url).get();
+                    }
+
+                }catch(Exception e) {
+                    e.printStackTrace();
+                }finally{
+                    if(bitmap != null) {
+                        // TODO: set the bitmap
+                        setBitMapForToolBar(mBitmap);
+                    } else {
+                        Log.e(TAG,"ERROR::: bitmap is null!");
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
@@ -352,7 +391,7 @@ public class ArticleDetailActivity extends AppCompatActivity
      * Load image from the PhotoURL
      */
     private void loadImage() {
-       // Bitmap bitmap = null;
+         //Bitmap bitmap = null;
         Log.d(TAG, "===========loadImage is called ===========");
         try {
             if (mCursor!=null) {
@@ -376,7 +415,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                     }
                 });
 
-               // bitmap =  mBitmap;
+               //bitmap =  mBitmap;
             } else {
                 Log.e(TAG, "Data cursor is null!");
 
